@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -8,7 +8,7 @@ import { Search, Calendar, Clock, Users, Plus, Loader2 } from "lucide-react";
 import { getMeetings, Meeting } from "@/lib/api";
 import { toast } from "react-hot-toast";
 
-export default function MeetingsDashboard() {
+function MeetingsDashboardContent() {
   const searchParams = useSearchParams();
   const initialSearch = searchParams.get("q") || "";
 
@@ -122,5 +122,18 @@ export default function MeetingsDashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MeetingsDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="p-16 text-center text-slate-500 flex flex-col items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-500 mb-4" />
+        <p>Loading dashboard...</p>
+      </div>
+    }>
+      <MeetingsDashboardContent />
+    </Suspense>
   );
 }
